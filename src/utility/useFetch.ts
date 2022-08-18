@@ -1,6 +1,11 @@
 // Example pulled from https://betterprogramming.pub/learn-to-create-your-own-usefetch-react-hook-9cc31b038e53
 import { useState, useEffect } from "react";
-const useFetch = (url: string, options: {}) => {
+const useFetch = (
+  url: string,
+  transform: (response: any) => any,
+  additionalDependency?: {},
+  options?: {}
+) => {
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -29,7 +34,16 @@ const useFetch = (url: string, options: {}) => {
     return () => {
       abortController.abort();
     };
-  }, []);
+  }, [url, options, additionalDependency]);
+
+  if (response && !error) {
+    try {
+      const data = transform(response);
+      return { response, error, loading, data };
+    } catch (e: any) {
+      setError(e);
+    }
+  }
   return { response, error, loading };
 };
 export default useFetch;

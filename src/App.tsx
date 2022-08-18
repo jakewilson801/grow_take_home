@@ -1,40 +1,33 @@
-import React, { FC, ReactNode } from "react";
+import React from "react";
 import moment from "moment";
 import logo from "./logo.svg";
 import "./App.css";
 import pinOrReadArticles from "./utility/pinOrReadArticles";
 import DisplayArticles from "./components/DisplayArticles";
+import useFetch from "./utility/useFetch";
 
 function App() {
   const [selectedDate, setSelectedDate] = React.useState<string>(
     moment().subtract(1, "days").format("yyyy-MM-DD")
   );
   const [pageSize, setPageSize] = React.useState<number>(100);
-  const [articles, setArticles] = React.useState<[]>();
   const [pinnedArticles, setPinnedArticles] = React.useState<[]>(
     pinOrReadArticles()
   );
-  const [loading, setLoading] = React.useState(true);
 
-  React.useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      // Tried to do a limit here to reduce traffic but even the client side library slices on response
-      // https://github.com/tomayac/pageviews.js/blob/master/pageviews.js#L490
-      const json = await fetch(
-        `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${moment(
-          selectedDate
-        ).format("yyyy/MM/DD")}`
-      );
+  const { data, loading } = useFetch(
+    `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${moment(
+      selectedDate
+    ).format("yyyy/MM/DD")}`,
+    (response) => {
       const {
         items: [articles],
-      } = await json.json();
-      const limitedResults = articles?.articles.slice(0, pageSize);
-      setLoading(false);
-      setArticles(limitedResults);
-    };
-    getData();
-  }, [selectedDate, pageSize]);
+      } = response;
+      return articles?.articles.slice(0, pageSize);
+    },
+    pageSize
+  );
+
   return (
     <div>
       <div
@@ -85,10 +78,10 @@ function App() {
               <option value={100}>100</option>
               <option value={200}>200</option>
             </select>
-          </div>
-          <br />
-          <div>
+            <br />
             {loading && <img src={logo} className="App-logo" alt="logo" />}
+          </div>
+          <div>
             {pinnedArticles && (
               <DisplayArticles
                 articles={pinnedArticles}
@@ -96,11 +89,8 @@ function App() {
               />
             )}
             <br />
-            {articles && (
-              <DisplayArticles
-                articles={articles}
-                pinArticle={setPinnedArticles}
-              />
+            {data && (
+              <DisplayArticles articles={data} pinArticle={setPinnedArticles} />
             )}
           </div>
         </div>
