@@ -35,6 +35,7 @@ export default function DisplayArticles(props: {
               <a
                 href={`https://en.wikipedia.org/wiki/${article}`}
                 target={"_blank"}
+                rel="noreferrer"
               >
                 {article}
               </a>
