@@ -17,7 +17,7 @@ function App() {
     pinOrReadArticles()
   );
 
-  const { data, loading } = useFetch(
+  const { data, loading, error } = useFetch(
     `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${moment(
       selectedDate
     ).format("yyyy/MM/DD")}`,
@@ -27,7 +27,8 @@ function App() {
       } = response;
       return articles?.articles.slice(0, pageSize);
     },
-    pageSize
+    pageSize,
+    selectedDate
   );
 
   return (
@@ -75,13 +76,18 @@ function App() {
                 <hr />
               </>
             )}
-
-            {data && (
+            {data && !error && (
               <DisplayArticles
                 pinned={false}
                 articles={data}
                 pinArticle={setPinnedArticles}
               />
+            )}
+            {error && (
+              <div>
+                There was an issue fetching posts please check the dates
+                inputted.
+              </div>
             )}
           </div>
         </div>

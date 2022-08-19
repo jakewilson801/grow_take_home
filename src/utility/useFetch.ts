@@ -3,10 +3,12 @@ import { useState, useEffect } from "react";
 const useFetch = (
   url: string,
   transform: (response: any) => any,
+  dataDependency?: {},
   additionalDependency?: {},
   options?: {}
 ) => {
   const [response, setResponse] = useState(null);
+  const [data, setData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   useEffect(() => {
@@ -17,6 +19,14 @@ const useFetch = (
       try {
         const res = await fetch(url, options);
         const json = await res.json();
+        try {
+          const data = transform(json);
+          setError(null);
+          setData(data);
+        } catch (e: any) {
+          setError(e);
+        }
+
         if (!signal.aborted) {
           setResponse(json);
         }
@@ -34,16 +44,8 @@ const useFetch = (
     return () => {
       abortController.abort();
     };
-  }, [url, options, additionalDependency]);
+  }, [url, options, additionalDependency, dataDependency]);
 
-  if (response && !error) {
-    try {
-      const data = transform(response);
-      return { response, error, loading, data };
-    } catch (e: any) {
-      setError(e);
-    }
-  }
-  return { response, error, loading };
+  return { response, error, data, loading };
 };
 export default useFetch;

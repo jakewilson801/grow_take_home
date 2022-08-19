@@ -10,11 +10,13 @@ export default function PageDateOptions(props: {
       onChange={(event) => {
         const selected = event?.target.value;
         if (
-          moment(selected).isAfter(moment()) ||
-          moment(selected).format("yyyy-DD-MM") ===
-            moment().format("yyyy-DD-MM")
+          !(
+            moment(selected).isAfter(moment()) ||
+            moment(selected).format("yyyy-DD-MM") ===
+              moment().format("yyyy-DD-MM") ||
+            moment(selected).year() < 2000
+          )
         ) {
-        } else {
           props?.setSelectedDate(event?.target.value);
         }
       }}
