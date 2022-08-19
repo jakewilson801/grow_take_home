@@ -5,19 +5,36 @@ import useIsMobile from "../utility/useIsMobile";
 export default function DisplayArticles(props: {
   articles: [];
   pinArticle: (articles: []) => void;
+  pinned: boolean;
 }): JSX.Element {
   const isMobile = useIsMobile();
+  const containerStyle = isMobile
+    ? { display: "flex", width: 400, flexDirection: "column" }
+    : {
+        width: 770,
+        display: "grid",
+        gridTemplateColumns: "50% 50%",
+        gridGap: "1rem",
+        gridAutoFlow: "row",
+      };
+
   return (
-    <>
+    <div
+      //@ts-ignore
+      style={containerStyle}
+      data-testid={props?.pinned ? "PINNED_ARTICLES" : "ARTICLES"}
+    >
       {props?.articles?.map(({ article, views, rank }: any, index) => {
         return (
           <div
             key={index}
             style={{
+              margin: 10,
+              padding: 5,
               display: "flex",
               height: 50,
-              width: isMobile ? 300 : 700,
               border: "1px solid black",
+              borderRadius: 5,
               justifyContent: "space-between",
               alignItems: "center",
               flexDirection: "row",
@@ -45,6 +62,7 @@ export default function DisplayArticles(props: {
               </div>
             </div>
             <div
+              data-testid={`${props?.pinned ? "PINNED_" : ""}ARTICLE${index}`}
               onClick={() => {
                 const updatedArticles = pinOrReadArticles({
                   article,
@@ -64,6 +82,6 @@ export default function DisplayArticles(props: {
           </div>
         );
       })}
-    </>
+    </div>
   );
 }

@@ -1,10 +1,12 @@
 import React from "react";
 import moment from "moment";
-import logo from "./logo.svg";
 import "./App.css";
 import pinOrReadArticles from "./utility/pinOrReadArticles";
 import DisplayArticles from "./components/DisplayArticles";
 import useFetch from "./utility/useFetch";
+import PageSizeOptions from "./components/PageSizeOptions";
+import PageDateOptions from "./components/PageDateOptions";
+import Loading from "./utility/Loading";
 
 function App() {
   const [selectedDate, setSelectedDate] = React.useState<string>(
@@ -37,10 +39,9 @@ function App() {
           height: 50,
           border: "2px solid black",
           flexDirection: "column",
-          padding: 1,
         }}
       >
-        <h2 style={{ paddingLeft: 5 }}>Grow Take Home</h2>
+        <h2 style={{ paddingLeft: 5 }}>Wikimedia Top Views</h2>
       </div>
       <div
         style={{
@@ -50,47 +51,37 @@ function App() {
         }}
       >
         <div>
-          <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ margin: 20, display: "flex", flexDirection: "column" }}>
             <div>Start Date:</div>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(event) => {
-                const selected = event?.target.value;
-                if (
-                  moment(selected).isAfter(moment()) ||
-                  moment(selected).format("yyyy-DD-MM") ===
-                    moment().format("yyyy-DD-MM")
-                ) {
-                } else {
-                  setSelectedDate(event?.target.value);
-                }
-              }}
+            <PageDateOptions
+              selectedDate={selectedDate}
+              setSelectedDate={setSelectedDate}
             />
             <div>Number of results:</div>
-            <select
-              defaultValue={pageSize}
-              onChange={(event) => setPageSize(Number(event?.target.value))}
-            >
-              <option value={25}>25</option>
-              <option value={50}>50</option>
-              <option value={75}>75</option>
-              <option value={100}>100</option>
-              <option value={200}>200</option>
-            </select>
-            <br />
-            {loading && <img src={logo} className="App-logo" alt="logo" />}
+            <PageSizeOptions pageSize={pageSize} setPageSize={setPageSize} />
+            <Loading loading={loading} />
           </div>
           <div>
-            {pinnedArticles && (
+            {pinnedArticles && pinnedArticles?.length > 0 && (
+              <>
+                <div style={{ marginLeft: 15 }}>
+                  <b>Pinned:</b>
+                </div>
+                <DisplayArticles
+                  pinned={true}
+                  articles={pinnedArticles}
+                  pinArticle={setPinnedArticles}
+                />
+                <hr />
+              </>
+            )}
+
+            {data && (
               <DisplayArticles
-                articles={pinnedArticles}
+                pinned={false}
+                articles={data}
                 pinArticle={setPinnedArticles}
               />
-            )}
-            <br />
-            {data && (
-              <DisplayArticles articles={data} pinArticle={setPinnedArticles} />
             )}
           </div>
         </div>
