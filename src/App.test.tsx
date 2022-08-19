@@ -19,6 +19,9 @@ describe("Testing", () => {
 
   test("Renders the correct number of elements when changing option", async () => {
     render(<App />);
+    await waitFor(() => {
+      screen.getByTestId("ARTICLES");
+    });
     fireEvent.change(screen.getByTestId("PAGE_SIZE"), {
       target: { value: 50 },
     });
@@ -38,16 +41,6 @@ describe("Testing", () => {
     await waitFor(() => {
       const articles = screen.getByTestId("PINNED_ARTICLES");
       expect(articles).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByTestId("PINNED_ARTICLE0"));
-    await waitFor(() => {
-      let error;
-      try {
-        screen.getByTestId("PINNED_ARTICLES");
-      } catch (e) {
-        error = e;
-      }
-      expect(error).toBeDefined();
     });
   });
 });
