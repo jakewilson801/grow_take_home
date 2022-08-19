@@ -44,7 +44,7 @@ const useFetch = (
     return () => {
       abortController.abort();
     };
-  }, [url, options, additionalDependency, dataDependency]);
+  }, [url, options, additionalDependency, dataDependency, transform]);
 
   return { response, error, data, loading };
 };
