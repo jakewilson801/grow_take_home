@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // Example pulled from https://betterprogramming.pub/learn-to-create-your-own-usefetch-react-hook-9cc31b038e53
 import { useState, useEffect } from "react";
 const useFetch = (
@@ -44,7 +45,7 @@ const useFetch = (
     return () => {
       abortController.abort();
     };
-  }, [url, options, additionalDependency, dataDependency, transform]);
+  }, [url, options, additionalDependency, dataDependency]);
 
   return { response, error, data, loading };
 };
