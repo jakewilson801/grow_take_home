@@ -26,14 +26,3 @@ Your app is ready to be deployed!
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
 Remaining questions 
-
-When I pin something and hit the pin button in the main list it unpins it. Probably not what we want
-You can type in dates and it  errors out against the API 
-Doing the same day cmp with str comp not moment comp 
-Testing against the API 
-Tried to do a limit to reduce traffic but even the client side library slices the result on response
-perf on inline css is poor 
-ts ignore on grid
-https://github.com/tomayac/pageviews.js/blob/master/pageviews.js#L490
-i18n
-ally11
